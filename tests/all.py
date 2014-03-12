@@ -1745,6 +1745,13 @@ with profile.test_list.group_manager(
         grouptools.join('spec', 'ARB_arrays_of_arrays')) as g:
     g(['arb_arrays_of_arrays-max-binding'], run_concurrent=False)
 
+# INTEL_performance_query
+with profile.group_manager(
+        PiglitGLTest, grouptools.join('spec', 'INTEL_performance_monitor')) as g:
+    g(['intel_performance_monitor_api'], 'api', run_concurrent=False)
+    g(['intel_performance_monitor_measure'], 'measure', run_concurrent=False)
+    g(['intel_performance_monitor_minmax'], 'minmax', run_concurrent=False)
+
 # Group ARB_point_sprite
 with profile.test_list.group_manager(
         PiglitGLTest, grouptools.join('spec', 'ARB_point_sprite')) as g:

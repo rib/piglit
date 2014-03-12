@@ -1,4 +1,5 @@
 add_subdirectory (amd_performance_monitor)
+add_subdirectory (intel_performance_query)
 add_subdirectory (amd_pinned_memory)
 add_subdirectory (arb_arrays_of_arrays)
 add_subdirectory (arb_base_instance)
