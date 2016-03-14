@@ -43,12 +43,11 @@ PIGLIT_GL_TEST_CONFIG_END
 #define XSTR(S) STR(S)
 #define STR(S) #S
 
-#define USE_DOUBLE
-
 #define SSBO_SIZE 24
 #define TOLERANCE 1e-5
 #define DIFFER(a,b) ((a > b ? a - b : b - a) > TOLERANCE)
 
+#define USE_DOUBLE
 
 static const char vs_code[] =
 	"#version 150\n"
@@ -63,17 +62,18 @@ static const char vs_code[] =
         "       float u[" XSTR(SSBO_SIZE) "/4];\n"
 #endif
 	"};\n"
+        "in vec4 vertex;\n"
 #ifdef USE_DOUBLE
-	"in dvec4 vertex;\n"
+	"in double value;\n"
 #else
-	"in vec4 vertex;\n"
+	"in float value;\n"
 #endif
 	"void main() {\n"
-	"	gl_Position = vec4(1.0);\n"
+	"	gl_Position = vec4(vertex);\n"
 #ifdef USE_DOUBLE
-	"       u[gl_VertexID] = vertex.x;\n"
+	"       u[gl_VertexID] = value;\n"
 #else
-	"       u[gl_VertexID] = vertex.x;\n"
+	"       u[gl_VertexID] = value;\n"
 #endif
         "}\n";
 
@@ -95,11 +95,11 @@ double ssbo_values[SSBO_SIZE] = { 0.0 };
 float ssbo_values[SSBO_SIZE] = { 0.0 };
 #endif
 
-#ifdef USE_DOUBLE
-static const double verts[] = {
-#else
+/* #ifdef USE_DOUBLE */
+/* static const double verts[] = { */
+/* #else */
 static const float verts[] = {
-#endif
+/* #endif */
   6.776277770192E-21, 0.0, 0.0, 0.0,
   0.0, 0.0, 0.0, 0.0,
 };
@@ -176,13 +176,17 @@ enum piglit_result piglit_display(void)
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
 
-        GLint attrib_location = glGetAttribLocation(prog, "vertex");
+  GLint attrib_location = glGetAttribLocation(prog, "value");
+  double v=3.50000000000727684579260312603E02; //0x4075E00000003202
+  glVertexAttribL1d(attrib_location, v);
 
-#ifdef USE_DOUBLE
-        glVertexAttribLPointer(attrib_location, 4, GL_DOUBLE, 0, (const GLvoid *)0);
-#else
+        attrib_location = glGetAttribLocation(prog, "vertex");
+
+/* #ifdef USE_DOUBLE */
+/*         glVertexAttribLPointer(attrib_location, 4, GL_DOUBLE, 0, (const GLvoid *)0); */
+/* #else */
         glVertexAttribPointer(attrib_location, 4, GL_FLOAT, GL_FALSE, 0, (const GLvoid  *)0);
-#endif
+/* #endif */
         glEnableVertexAttribArray(attrib_location);
         glDrawArrays(GL_LINES, 0, 2);
 
