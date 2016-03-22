@@ -1,0 +1,39 @@
+# Test with just one value
+#
+[require]
+GLSL >= 1.50
+GL_ARB_gpu_shader_fp64
+GL_ARB_vertex_attrib_64bit
+
+[vertex shader]
+#version 150
+#extension GL_ARB_gpu_shader_fp64 : require
+#extension GL_ARB_vertex_attrib_64bit : require
+
+in double position;
+
+void main()
+{
+	gl_Position = vec4(float(position), 0.0, 0.0, 1.0);
+}
+
+[fragment shader]
+#version 150
+out vec4 color;
+
+void main()
+{
+        color = vec4(1.0);
+}
+
+[vertex data]
+position/double/1
+0.5
+
+[test]
+clear color 0.0 0.0 0.0 0.0
+clear
+pointsize 10.0
+draw arrays GL_POINTS 0 1
+relative probe rgba (0.75, 0.5) (1.0, 1.0, 1.0, 1.0)
+
