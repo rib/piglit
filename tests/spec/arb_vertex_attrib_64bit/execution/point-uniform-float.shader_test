@@ -1,0 +1,32 @@
+# Test with a uniform
+#
+[require]
+GLSL >= 1.50
+
+[vertex shader]
+#version 150
+
+uniform float position;
+
+void main()
+{
+	gl_Position = vec4(position, 0.0, 0.0, 1.0);
+}
+
+[fragment shader]
+#version 150
+out vec4 color;
+
+void main()
+{
+        color = vec4(1.0);
+}
+
+[test]
+clear color 0.0 0.0 0.0 0.0
+clear
+uniform float position 0.5
+pointsize 10.0
+draw arrays GL_POINTS 0 1
+relative probe rgba (0.75, 0.5) (1.0, 1.0, 1.0, 1.0)
+
