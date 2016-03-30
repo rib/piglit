@@ -71,9 +71,9 @@ static const char vs_code[] =
 	"void main() {\n"
 	"	gl_Position = vec4(vertex);\n"
 #ifdef USE_DOUBLE
-	"       u[gl_VertexID] = value;\n"
+	"       u[0] = value;\n"
 #else
-	"       u[gl_VertexID] = value;\n"
+	"       u[] = value;\n"
 #endif
         "}\n";
 
