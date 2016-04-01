@@ -1,0 +1,49 @@
+# Checking that a matrix is properly passed as an vertex attribute
+[require]
+GLSL >= 1.50
+
+[vertex shader]
+#version 150
+
+uniform float tolerance;
+uniform mat2x4 expected;
+
+in vec3 vertex;
+in mat2x4 value;
+out vec4 color;
+
+void main()
+{
+  bool pass = true;
+
+  gl_Position = vec4(vertex, 1.0);
+
+  pass = pass && (distance(value[0], expected[0]) <= tolerance);
+  pass = pass && (distance(value[1], expected[1]) <= tolerance);
+
+  color = pass ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(0.0, 0.0, 0.0, 1.0);
+}
+
+[fragment shader]
+#version 150
+
+in vec4 color;
+void main()
+{
+  gl_FragColor = color;
+}
+
+[vertex data]
+vertex/float/3  value/float/4/0 value/float/4/1
+-1.0 -1.0 0.0   0 0 0 0          1 1 1 1
+ 1.0 -1.0 0.0   0 0 0 0          1 1 1 1
+ 1.0  1.0 0.0   0 0 0 0          1 1 1 1
+-1.0  1.0 0.0   0 0 0 0          1 1 1 1
+
+[test]
+uniform float tolerance 0.0
+uniform mat2x4 expected 0 0 0 0 1 1 1 1
+clear color 0.0 0.0 1.0 0.0
+clear
+draw arrays GL_TRIANGLE_FAN 0 4
+probe rgba 0 0 0.0 1.0 0.0 1.0
