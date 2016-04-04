@@ -57,14 +57,13 @@ static const char vs_code[] =
         "       double u[" XSTR(SSBO_SIZE) "/4];\n"
 	"};\n"
         "in vec4 vertex;\n"
-	"in dvec3 value1;\n"
-        "in dvec3 value2;\n"
+	"in dmat2x2 value;\n"
 	"void main() {\n"
 	"	gl_Position = vec4(vertex);\n"
-	"       u[0] = value1.x;\n"
-        "       u[1] = value2.x;\n"
-        "       u[4] = value1.y;\n"
-        "       u[5] = value2.y;\n"
+	"       u[0] = value[0].x;\n"
+        "       u[1] = value[0].y;\n"
+        "       u[2] = value[1].x;\n"
+        "       u[3] = value[1].y;\n"
         "}\n";
 
 static const char fs_source[] =
@@ -153,20 +152,17 @@ enum piglit_result piglit_display(void)
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
 
-  GLint attrib_location = glGetAttribLocation(prog, "value1");
+  GLint attrib_location = glGetAttribLocation(prog, "value");
   double v1=3.50000000000727684579260312603E02; //0x4075E00000003202
   double v2=5.00000000000047073456244106637E00; //0x4014000000000212
   double v3=9.32200000000000045474735088646E02; //0x408D21999999999A
   double v4=3.23200000000000006381006834033E-3; //0x3F6A79FEC99F1AE3
 
-  glVertexAttribL3d(attrib_location, v1, v2, v3);
+  double c1[] = { 3.50000000000727684579260312603E02, 5.00000000000047073456244106637E00};
+  double c2[] = { 9.32200000000000045474735088646E02, 3.23200000000000006381006834033E-3 };
+  glVertexAttribL2d(attrib_location + 0, v1, v2);
+  glVertexAttribL2d(attrib_location + 1, v3, v4);
 
-  attrib_location = glGetAttribLocation(prog, "value2");
-  v1=1.25980000000000003090860900556E00; //0x3FF428240B780347
-  v2=6.57899930000000022118911147118E04; //0x40F00FDFE353F7CF
-  v3=6.57890003252999973297119140625E09; //0x41F88220C4087AE1
-
-  glVertexAttribL3d(attrib_location, v1, v2, v3);
 
         attrib_location = glGetAttribLocation(prog, "vertex");
 
