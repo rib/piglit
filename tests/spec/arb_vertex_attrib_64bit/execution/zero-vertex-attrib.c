@@ -31,13 +31,11 @@
  *  The error INVALID_OPERATION is generated if index
  *  is zero, as there is no current value for generic attribute zero."
  *
- * Although the paragraph is focused on GetVertexAtribLdv, taking into
- * account the explanation, INVALID_OPERATION should be raised for any
- * or the *L* methods defined by the spec.
+ * Also found on 4.1 spec, section 6.1, page 338:
+ * "The error INVALID_OPERATION is generated if index is zero and
+ * pname is CURRENT_VERTEX_ATTRIB , since there is no current value
+ * for generic attribute zero."
  *
- * This test is similar to max-vertex-attrib, but using index 0
- * (instead of GL_MAX_VERTEX_ATTRIB) and checking agains
- * INVALID_OPERATION instead of INVALID_VALUE.
  */
 
 #include "piglit-util-gl.h"
@@ -49,8 +47,6 @@ PIGLIT_GL_TEST_CONFIG_BEGIN
 	config.window_visual = PIGLIT_GL_VISUAL_RGB | PIGLIT_GL_VISUAL_DOUBLE;
 
 PIGLIT_GL_TEST_CONFIG_END
-
-static int test = 0;
 
 #define CHECK_GL_INVALID_OPERATION \
 	if (glGetError() != GL_INVALID_OPERATION) return PIGLIT_FAIL; \
@@ -65,52 +61,13 @@ piglit_display(void)
 static GLboolean
 run_test(void)
 {
-	GLdouble doublev[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLdouble quad[] = { -1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0 };
+        GLdouble doublev[] = { 1.0, 1.0, 1.0, 1.0 };
 
-	GLuint zeroIndex = 0; /* using a variable to make easier to read the method calls */
-
-	glVertexAttribL1d(zeroIndex, doublev[0]);
-	CHECK_GL_INVALID_OPERATION;
-
-	glVertexAttribL2d(zeroIndex, doublev[0], doublev[1]);
-	CHECK_GL_INVALID_OPERATION;
-
-	glVertexAttribL3d(zeroIndex, doublev[0], doublev[1], doublev[2]);
-	CHECK_GL_INVALID_OPERATION;
-
-	glVertexAttribL4d(zeroIndex, doublev[0], doublev[1], doublev[2],
-			 doublev[3]);
-	CHECK_GL_INVALID_OPERATION;
-
-	glVertexAttribL1dv(zeroIndex, doublev);
-	CHECK_GL_INVALID_OPERATION;
-
-	glVertexAttribL2dv(zeroIndex, doublev);
-	CHECK_GL_INVALID_OPERATION;
-
-	glVertexAttribL3dv(zeroIndex, doublev);
-	CHECK_GL_INVALID_OPERATION;
-
-	glVertexAttribL4dv(zeroIndex, doublev);
-	CHECK_GL_INVALID_OPERATION;
-
-	glVertexAttribLPointer(zeroIndex, 2, GL_DOUBLE, 0, quad);
-	CHECK_GL_INVALID_OPERATION;
-
-	glGetVertexAttribLdv(zeroIndex, GL_CURRENT_VERTEX_ATTRIB, doublev);
-	CHECK_GL_INVALID_OPERATION;
-
-        if (piglit_is_extension_supported("GL_EXT_direct_state_access")) {
-                uint vaobj;
-
-                glGenVertexArrays(1, &vaobj);
-                glBindVertexArray(vaobj);
-
-                glVertexArrayVertexAttribLOffsetEXT(vaobj, 0, zeroIndex, 3,
-                                                    GL_DOUBLE, 0, 0);
-                glDeleteVertexArrays(1, &vaobj);
-                CHECK_GL_INVALID_OPERATION;
+        glGetVertexAttribLdv(0, GL_CURRENT_VERTEX_ATTRIB, doublev);
+        if (glGetError () != GL_INVALID_OPERATION) {
+                fprintf(stderr, "GL_INVALID_OPERATION expected when calling "
+                        "GetVertexAttribLdv with index 0 and pname GL_CURRENT_VERTEX_ATTRIB.\n");
+                return PIGLIT_FAIL;
         }
 
         return PIGLIT_PASS;
