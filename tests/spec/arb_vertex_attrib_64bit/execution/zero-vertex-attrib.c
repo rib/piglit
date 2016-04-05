@@ -61,16 +61,25 @@ piglit_display(void)
 static GLboolean
 run_test(void)
 {
+        enum piglit_result result = PIGLIT_PASS;
         GLdouble doublev[] = { 1.0, 1.0, 1.0, 1.0 };
+        GLfloat floatv[] = { 1.0, 1.0, 1.0, 1.0 };
+
+        glGetVertexAttribfv(0, GL_CURRENT_VERTEX_ATTRIB, floatv);
+        if (glGetError () != GL_INVALID_OPERATION) {
+                fprintf(stderr, "GL_INVALID_OPERATION expected when calling "
+                        "GetVertexAttribfv with index 0 and pname GL_CURRENT_VERTEX_ATTRIB.\n");
+                result = PIGLIT_FAIL;
+        }
 
         glGetVertexAttribLdv(0, GL_CURRENT_VERTEX_ATTRIB, doublev);
         if (glGetError () != GL_INVALID_OPERATION) {
                 fprintf(stderr, "GL_INVALID_OPERATION expected when calling "
                         "GetVertexAttribLdv with index 0 and pname GL_CURRENT_VERTEX_ATTRIB.\n");
-                return PIGLIT_FAIL;
+                result = PIGLIT_FAIL;
         }
 
-        return PIGLIT_PASS;
+        return result;
 }
 
 void piglit_init(int argc, char **argv)
