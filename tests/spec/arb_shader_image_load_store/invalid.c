@@ -229,6 +229,23 @@ invalidate_incomplete(const struct image_info img, GLuint prog)
 }
 
 static bool
+invalidate_incomplete_mipmap(const struct image_info img, GLuint prog)
+{
+        /* Bind a texture with correct base level, non-base level
+	 * texture invalid, so mipmap filtering isn't possible */
+        bool ret = init_level(img, 0, img.format->format, W, H);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL,  7);
+
+        glBindImageTexture(0, get_texture(0), 0, GL_TRUE, 0, GL_READ_WRITE,
+                           img.format->format);
+
+        return ret && piglit_check_gl_error(GL_NO_ERROR);
+}
+
+static bool
 invalidate_level_bounds(const struct image_info img, GLuint prog)
 {
         const int level = 1;
@@ -368,6 +385,17 @@ piglit_init(int argc, char **argv)
                         run_test(op, def_img, def_img,
                                  invalidate_incomplete, false),
                         "%s/incomplete image test", op->name);
+
+		/* There are several cases where the texture can be
+		 * incomplete.*/
+		/*
+                 * " * the texture bound to the selected image unit is
+                 *     incomplete; [...]"
+                 */
+                subtest(&status, true,
+                        run_test(op, def_img, def_img,
+                                 invalidate_incomplete_mipmap, false),
+                        "%s/incomplete mipmap image test", op->name);
 
                 /*
                  * " * the texture level bound to the image unit is
