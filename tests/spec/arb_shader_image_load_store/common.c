@@ -141,6 +141,11 @@ upload_image_levels(const struct image_info img, unsigned num_levels,
         glGenTextures(1, &textures[unit]);
         glBindTexture(img.target->target, textures[unit]);
 
+        if (img.target->target != GL_TEXTURE_BUFFER) {
+                glTexParameteri(img.target->target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                glTexParameteri(img.target->target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
+
         switch (img.target->target) {
         case GL_TEXTURE_1D:
                 for (l = 0; l < num_levels; ++l) {
