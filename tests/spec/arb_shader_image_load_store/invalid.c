@@ -372,19 +372,19 @@ piglit_init(int argc, char **argv)
                  * " * no texture is bound to the selected image unit;
                  *     [...]"
                  */
-                subtest(&status, true,
-                        run_test(op, def_img, def_img,
-                                 invalidate_unbound, false),
-                        "%s/unbound image test", op->name);
+                /* subtest(&status, true, */
+                /*         run_test(op, def_img, def_img, */
+                /*                  invalidate_unbound, false), */
+                /*         "%s/unbound image test", op->name); */
 
                 /*
                  * " * the texture bound to the selected image unit is
                  *     incomplete; [...]"
                  */
-                subtest(&status, true,
-                        run_test(op, def_img, def_img,
-                                 invalidate_incomplete, false),
-                        "%s/incomplete image test", op->name);
+                /* subtest(&status, true, */
+                /*         run_test(op, def_img, def_img, */
+                /*                  invalidate_incomplete, false), */
+                /*         "%s/incomplete image test", op->name); */
 
 		/* There are several cases where the texture can be
 		 * incomplete.*/
@@ -402,104 +402,104 @@ piglit_init(int argc, char **argv)
                  *     less than the base level or greater than the
                  *     maximum level of the texture; [...]"
                  */
-                subtest(&status, true,
-                        run_test(op, def_img, def_img,
-                                 invalidate_level_bounds, false),
-                        "%s/level bounds test", op->name);
+                /* subtest(&status, true, */
+                /*         run_test(op, def_img, def_img, */
+                /*                  invalidate_level_bounds, false), */
+                /*         "%s/level bounds test", op->name); */
 
-                /*
-                 * " * the internal format of the texture bound to the
-                 *     image unit is not found in Table X.2; [...]"
-                 */
-                subtest(&status, true,
-                        run_test(op, def_img, def_img,
-                                 invalidate_invalid_format, false),
-                        "%s/invalid format test", op->name);
+                /* /\* */
+                /*  * " * the internal format of the texture bound to the */
+                /*  *     image unit is not found in Table X.2; [...]" */
+                /*  *\/ */
+                /* subtest(&status, true, */
+                /*         run_test(op, def_img, def_img, */
+                /*                  invalidate_invalid_format, false), */
+                /*         "%s/invalid format test", op->name); */
 
-                /*
-                 * " * the internal format of the texture bound to the
-                 *     image unit is incompatible with the specified
-                 *     <format> according to Table X.3; [...]"
-                 */
-                subtest(&status, true,
-                        run_test(op, def_img, def_img,
-                                 invalidate_incompatible_format, false),
-                        "%s/incompatible format test", op->name);
+                /* /\* */
+                /*  * " * the internal format of the texture bound to the */
+                /*  *     image unit is incompatible with the specified */
+                /*  *     <format> according to Table X.3; [...]" */
+                /*  *\/ */
+                /* subtest(&status, true, */
+                /*         run_test(op, def_img, def_img, */
+                /*                  invalidate_incompatible_format, false), */
+                /*         "%s/incompatible format test", op->name); */
 
-                /*
-                 * " * the texture bound to the image unit has layers,
-                 *     and the selected layer or cube map face doesn't
-                 *     exist; [...]"
-                 */
-                subtest(&status, true,
-                        run_test(op,
-                                 image_info(GL_TEXTURE_2D_ARRAY,
-                                            op->formats[0].format, W, H),
-                                 def_img, invalidate_layer_bounds, false),
-                        "%s/layer bounds test", op->name);
+                /* /\* */
+                /*  * " * the texture bound to the image unit has layers, */
+                /*  *     and the selected layer or cube map face doesn't */
+                /*  *     exist; [...]" */
+                /*  *\/ */
+                /* subtest(&status, true, */
+                /*         run_test(op, */
+                /*                  image_info(GL_TEXTURE_2D_ARRAY, */
+                /*                             op->formats[0].format, W, H), */
+                /*                  def_img, invalidate_layer_bounds, false), */
+                /*         "%s/layer bounds test", op->name); */
 
-                /*
-                 * " * the selected texel tau_i, tau_i_j, or tau_i_j_k
-                 *     doesn't exist; [...]"
-                 */
-                for (target = image_targets(); target->name; ++target) {
-                        const struct image_info img = image_info(
-                                target->target, op->formats[0].format, W, H);
+                /* /\* */
+                /*  * " * the selected texel tau_i, tau_i_j, or tau_i_j_k */
+                /*  *     doesn't exist; [...]" */
+                /*  *\/ */
+                /* for (target = image_targets(); target->name; ++target) { */
+                /*         const struct image_info img = image_info( */
+                /*                 target->target, op->formats[0].format, W, H); */
 
-                        subtest(&status, true,
-                                run_test(op, img, img,
-                                         invalidate_address_bounds, false),
-                                "%s/address bounds test/image%s/%s",
-                                op->name, img.target->name, img.format->name);
-                }
+                /*         subtest(&status, true, */
+                /*                 run_test(op, img, img, */
+                /*                          invalidate_address_bounds, false), */
+                /*                 "%s/address bounds test/image%s/%s", */
+                /*                 op->name, img.target->name, img.format->name); */
+                /* } */
 
-                for (format = &op->formats[1]; format->name; ++format) {
-                        const struct image_info img = image_info(
-                                GL_TEXTURE_2D, format->format, W, H);
+                /* for (format = &op->formats[1]; format->name; ++format) { */
+                /*         const struct image_info img = image_info( */
+                /*                 GL_TEXTURE_2D, format->format, W, H); */
 
-                        subtest(&status, true,
-                                run_test(op, img, img,
-                                         invalidate_address_bounds, false),
-                                "%s/address bounds test/image%s/%s",
-                                op->name, img.target->name, img.format->name);
-                }
+                /*         subtest(&status, true, */
+                /*                 run_test(op, img, img, */
+                /*                          invalidate_address_bounds, false), */
+                /*                 "%s/address bounds test/image%s/%s", */
+                /*                 op->name, img.target->name, img.format->name); */
+                /* } */
 
-                /*
-                 * The following cases have undefined results, but may
-                 * not lead to program termination:
-                 *
-                 * "If the index used to select an individual [array]
-                 *  element is negative or greater than or equal to
-                 *  the size of the array [...]"
-                 */
-                subtest(&status, true,
-                        run_test(op, def_img, def_img,
-                                 invalidate_index_bounds, true),
-                        "%s/index bounds test", op->name);
+                /* /\* */
+                /*  * The following cases have undefined results, but may */
+                /*  * not lead to program termination: */
+                /*  * */
+                /*  * "If the index used to select an individual [array] */
+                /*  *  element is negative or greater than or equal to */
+                /*  *  the size of the array [...]" */
+                /*  *\/ */
+                /* subtest(&status, true, */
+                /*         run_test(op, def_img, def_img, */
+                /*                  invalidate_index_bounds, true), */
+                /*         "%s/index bounds test", op->name); */
 
-                /*
-                 * "the type of image variable used to access the
-                 *  image unit does not match the target of a texture
-                 *  bound to the image unit [...]"
-                 */
-                subtest(&status, true,
-                        run_test(op, def_img,
-                                 image_info(GL_TEXTURE_3D,
-                                            op->formats[0].format, W, H),
-                                 invalidate_nop, true),
-                        "%s/target mismatch test", op->name);
+                /* /\* */
+                /*  * "the type of image variable used to access the */
+                /*  *  image unit does not match the target of a texture */
+                /*  *  bound to the image unit [...]" */
+                /*  *\/ */
+                /* subtest(&status, true, */
+                /*         run_test(op, def_img, */
+                /*                  image_info(GL_TEXTURE_3D, */
+                /*                             op->formats[0].format, W, H), */
+                /*                  invalidate_nop, true), */
+                /*         "%s/target mismatch test", op->name); */
 
-                /*
-                 * "the format layout qualifier for an image variable
-                 *  used for an image load or atomic operation does
-                 *  not match the format of the image unit [...]"
-                 */
-                subtest(&status, true,
-                        run_test(op,
-                                 image_info(GL_TEXTURE_2D,
-                                            GL_R11F_G11F_B10F, W, H),
-                                 def_img, invalidate_nop, true),
-                        "%s/format mismatch test", op->name);
+                /* /\* */
+                /*  * "the format layout qualifier for an image variable */
+                /*  *  used for an image load or atomic operation does */
+                /*  *  not match the format of the image unit [...]" */
+                /*  *\/ */
+                /* subtest(&status, true, */
+                /*         run_test(op, */
+                /*                  image_info(GL_TEXTURE_2D, */
+                /*                             GL_R11F_G11F_B10F, W, H), */
+                /*                  def_img, invalidate_nop, true), */
+                /*         "%s/format mismatch test", op->name); */
 
         }
 
