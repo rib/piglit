@@ -288,7 +288,8 @@ piglit_init(int argc, char **argv)
 	if (num_queries == 0)
 		exit(0);
 
-	test_basic_measurement(queries[0]);
+	for (int i = 0; i < num_queries; i++)
+		test_basic_measurement(queries[i]);
 
 	exit(0);
 }
