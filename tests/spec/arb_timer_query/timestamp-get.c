@@ -80,12 +80,39 @@ validate_times(GLint64 t1, GLint64 t2, GLint64 tolerance)
 	}
 }
 
+static void
+validate_delta(GLint64 t1, GLint64 t2, GLint64 delta_ns, GLint64 tolerance)
+{
+	GLint64 ts_delta = t2 - t1;
+
+	if (ts_delta < delta_ns) {
+		printf("time 1 = %" PRId64 " us\n", t1 / 1000);
+		printf("time 2 = %" PRId64 " us\n", t2 / 1000);
+		printf("delta  = %" PRId64 " us (expect >= %"PRId64" us)\n",
+		       ts_delta / 1000, delta_ns / 1000);
+
+		piglit_loge("delta of gpu timestamps measured (synchronously) around cpu sleep, expected to be >= cpu sleep duration");
+		piglit_report_result(PIGLIT_FAIL);
+	}
+
+	if (llabs(ts_delta - delta_ns) > tolerance) {
+		printf("time 1 = %" PRId64 " us\n", t1 / 1000);
+		printf("time 2 = %" PRId64 " us\n", t2 / 1000);
+		printf("delta  = %" PRId64 " us (expect >= %"PRId64" us)\n",
+		       ts_delta / 1000, delta_ns / 1000);
+
+		piglit_loge("too big difference");
+		piglit_report_result(PIGLIT_FAIL);
+	}
+}
+
 enum piglit_result
 piglit_display(void)
 {
 	GLint64 t1, t2;
 	GLint64 query_overhead, get_overhead, tolerance;
 	GLuint q;
+	int64_t delay;
 
 	glGenQueries(1, &q);
 
@@ -119,6 +146,18 @@ piglit_display(void)
 	t1 = get_gpu_time_via_get(q);
 	t2 = get_gpu_time_via_query(q);
 	validate_times(t1, t2, tolerance);
+
+	puts("Test: wall clock time via glQuery");
+	t1 = get_gpu_time_via_query(q);
+	delay = piglit_delay_ns(1000000000);
+	t2 = get_gpu_time_via_query(q);
+	validate_delta(t1, t2, delay, query_overhead + 3000000);
+
+	puts("Test: wall clock time via glGet");
+	t1 = get_gpu_time_via_get(q);
+	delay = piglit_delay_ns(1000000000);
+	t2 = get_gpu_time_via_get(q);
+	validate_delta(t1, t2, delay, get_overhead + 3000000);
 
 	glDeleteQueries(1, &q);
 
