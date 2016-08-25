@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/syscall.h>
+#include <time.h>
 #endif
 
 #include <assert.h>
@@ -42,12 +43,9 @@
 #include <errno.h>
 #include <inttypes.h>
 
-#ifdef PIGLIT_HAS_POSIX_CLOCK_MONOTONIC
-#ifdef PIGLIT_HAS_POSIX_TIMER_NOTIFY_THREAD
+#if defined(PIGLIT_HAS_POSIX_CLOCK_MONOTONIC) && defined(PIGLIT_HAS_POSIX_TIMER_NOTIFY_THREAD)
 #include <pthread.h>
 #include <signal.h>
-#endif
-#include <time.h>
 #endif
 
 #include "config.h"
@@ -622,6 +620,27 @@ piglit_time_get_nano(void)
 	QueryPerformanceCounter(&counter);
 	return counter.QuadPart * INT64_C(1000000000)/frequency.QuadPart;
 #endif
+}
+
+int64_t
+piglit_delay_ns(int64_t time_ns)
+{
+	struct timespec ts;
+	int64_t start, end;
+
+	ts.tv_sec = time_ns / 1000000000LL;
+	ts.tv_nsec = time_ns - ts.tv_sec * 1000000000LL;
+
+	start = piglit_time_get_nano();
+#ifdef __linux__
+	while (nanosleep(&ts, &ts) == -1 && errno == EINTR)
+		;
+#else
+	usleep(time_ns / 1000);
+#endif
+	end = piglit_time_get_nano();
+
+	return end - start;
 }
 
 /**
