@@ -148,16 +148,34 @@ test_basic_measurement(unsigned query)
 	glCreatePerfQueryINTEL(query, &handle);
 	verify(piglit_check_gl_error(GL_NO_ERROR));
 
+	GLuint qo;
+	glGenQueries(1, &qo);
+
+	glFinish();
+
 	/* Start monitoring */
 	glBeginPerfQueryINTEL(handle);
 	verify(piglit_check_gl_error(GL_NO_ERROR));
 
+	glBeginQuery(GL_PRIMITIVES_GENERATED, qo);
+	verify(piglit_check_gl_error(GL_NO_ERROR));
+
 	/* Drawing...meh */
-	piglit_draw_triangle(0.0, 0.0, 1.0, 1.0, 0.5, 0.5);
+	for (int i = 0; i < 100000; i++)
+		piglit_draw_triangle(0.0, 0.0, 1.0, 1.0, 0.5, 0.5);
+
+	glFinish();
+
+	glEndQuery(GL_PRIMITIVES_GENERATED);
+	verify(piglit_check_gl_error(GL_NO_ERROR));
 
 	/* End monitoring */
 	glEndPerfQueryINTEL(handle);
 	verify(piglit_check_gl_error(GL_NO_ERROR));
+
+	uint64_t qo_val;
+	glGetQueryObjectui64v(qo, GL_QUERY_RESULT, &qo_val);
+	printf("XXX: QueryObject value for GL_PRIMITIVES_GENERATED=%"PRIu64"\n", qo_val);
 
 	piglit_report_subtest_result(PIGLIT_PASS, "%s", test_name);
 
