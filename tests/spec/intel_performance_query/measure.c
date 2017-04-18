@@ -124,6 +124,11 @@ value_size(GLuint datatype)
 static void
 test_basic_measurement(unsigned query)
 {
+	char query_name[256];
+	GLuint datasize;
+	GLuint n_counters;
+	GLuint n_active;
+	GLuint caps;
 	unsigned handle;
 	unsigned *counters;
 	unsigned num_counters;
@@ -140,6 +145,11 @@ test_basic_measurement(unsigned query)
 	* Begin monitoring, end monitoring.
 	*/
 	test_name = "initialization";
+
+	glGetPerfQueryInfoINTEL(query,
+				sizeof(query_name), query_name,
+				&datasize, &n_counters, &n_active, &caps);
+	printf("QUERY: %s\n", query_name);
 
 	get_counters(query, &counters, &num_counters);
 	verify(num_counters > 0);
