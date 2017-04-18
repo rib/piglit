@@ -191,7 +191,7 @@ test_next_query_invalid_queryid(unsigned invalidquery)
  * Verify that it doesn't attempt to write a query id and crash.
  */
 static void
-test_get_query_by_name_null_queryid_pointer(const char *validname)
+test_get_query_by_name_null_queryid_pointer(GLchar *validname)
 {
 	glGetPerfQueryIdByNameINTEL(validname, NULL);
 	/* The specification does not say that this should produce an error. */
@@ -215,7 +215,7 @@ test_get_query_by_name_null_name_pointer(void)
  * Verify that it produces INVALID_VALUE.
  */
 static void
-test_get_query_by_name_invalid_name(const char *invalidname)
+test_get_query_by_name_invalid_name(GLchar *invalidname)
 {
 	unsigned dummy;
 
@@ -234,13 +234,13 @@ test_get_perf_query_info_invalid_queryid(unsigned invalidquery)
 {
 	char name[256];
 	GLuint datasize;
-	GLuint counters;
-	GLuint instances;
+	GLuint n_counters;
+	GLuint n_active;
 	GLuint caps;
 
 	glGetPerfQueryInfoINTEL(invalidquery,
 				sizeof(name), name,
-				&datasize, &counters, &instances, &caps);
+				&datasize, &n_counters, &n_active, &caps);
 	report(piglit_check_gl_error(GL_INVALID_VALUE));
 }
 
@@ -756,8 +756,18 @@ piglit_init(int argc, char **argv)
 	invalid_query = find_invalid_query(queries, num_queries);
 	valid_query = queries[0];
 
+	/* The GL_INTEL_performance_query spec says:
+	 *
+	 *  "Performance counter ids values start with 1. Performance counter id 0
+	 *  is reserved as an invalid counter."
+	 */
+	test_next_query_null_nextqueryid_pointer(0);
+	test_next_query_invalid_queryid(0);
+	test_get_perf_query_info_invalid_queryid(0);
+
 	test_next_query_null_nextqueryid_pointer(valid_query);
 	test_next_query_invalid_queryid(invalid_query);
+	test_get_perf_query_info_invalid_queryid(invalid_query);
 
 	glGetPerfQueryInfoINTEL(valid_query, sizeof(valid_name), valid_name,
 				NULL, NULL, NULL, NULL);
@@ -766,7 +776,6 @@ piglit_init(int argc, char **argv)
 	test_get_query_by_name_null_name_pointer();
 	test_get_query_by_name_invalid_name
 		("We assume this is an invalid name of a query");
-	test_get_perf_query_info_invalid_queryid(invalid_query);
 	test_get_perf_query_info_null_pointers(valid_query);
 	test_get_perf_query_info_single_character_buffer(valid_query);
 	test_get_perf_counter_info_invalid_queryid(invalid_query);
